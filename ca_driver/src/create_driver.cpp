@@ -121,6 +121,9 @@ CreateDriver::CreateDriver(ros::NodeHandle& nh)
   undock_sub_ = nh.subscribe("undock", 10, &CreateDriver::undockCallback, this);
   define_song_sub_ = nh.subscribe("define_song", 10, &CreateDriver::defineSongCallback, this);
   play_song_sub_ = nh.subscribe("play_song", 10, &CreateDriver::playSongCallback, this);
+  side_motor_sub_ = nh.subscribe("side_motor", 10, &CreateDriver::sideMotorCallback, this);
+  main_motor_sub_ = nh.subscribe("main_motor", 10, &CreateDriver::mainMotorCallback, this);
+  vacuum_motor_sub_ = nh.subscribe("vacuum_motor", 10, &CreateDriver::vacuumMotorCallback, this);
 
   // Setup publishers
   odom_pub_ = nh.advertise<nav_msgs::Odometry>("odom", 30);
@@ -267,6 +270,34 @@ void CreateDriver::playSongCallback(const ca_msgs::PlaySongConstPtr& msg)
   if (!robot_->playSong(msg->song))
   {
     ROS_ERROR_STREAM("[CREATE] Failed to play song " << msg->song);
+  }
+}
+
+void CreateDriver::sideMotorCallback(const std_msgs::Float32ConstPtr& msg)
+{
+  if (!robot_->setSideMotor(msg->data))
+  {
+    ROS_ERROR("[CREATE] Side motor value out of range [-1, 1]");
+  }
+}
+
+void CreateDriver::mainMotorCallback(const std_msgs::Float32ConstPtr& msg)
+{
+  if (!robot_->setMainMotor(msg->data))
+  {
+    ROS_ERROR("[CREATE] Main motor value out of range [-1, 1]");
+  }
+}
+
+void CreateDriver::vacuumMotorCallback(const std_msgs::Float32ConstPtr& msg)
+{
+  if (msg->data < 0.0) // Needs to be checked since it is not checked in Create::setVacuumMotor
+  {
+    ROS_ERROR("[CREATE] Vacuum motor value must not be negative");
+  }
+  else if (!robot_->setVacuumMotor(msg->data))
+  {
+    ROS_ERROR("[CREATE] Vacuum motor value out of range [0, 1]");
   }
 }
 

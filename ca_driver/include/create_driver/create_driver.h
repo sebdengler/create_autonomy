@@ -100,6 +100,9 @@ private:
   void undockCallback(const std_msgs::EmptyConstPtr& msg);
   void defineSongCallback(const ca_msgs::DefineSongConstPtr& msg);
   void playSongCallback(const ca_msgs::PlaySongConstPtr& msg);
+  void sideMotorCallback(const std_msgs::Float32ConstPtr& msg);
+  void mainMotorCallback(const std_msgs::Float32ConstPtr& msg);
+  void vacuumMotorCallback(const std_msgs::Float32ConstPtr& msg);
 
   bool update();
   void updateBatteryDiagnostics(diagnostic_updater::DiagnosticStatusWrapper& stat);
@@ -130,6 +133,9 @@ protected:
   ros::Subscriber undock_sub_;
   ros::Subscriber define_song_sub_;
   ros::Subscriber play_song_sub_;
+  ros::Subscriber side_motor_sub_;
+  ros::Subscriber main_motor_sub_;
+  ros::Subscriber vacuum_motor_sub_;
 
   ros::Publisher odom_pub_;
   ros::Publisher clean_btn_pub_;
